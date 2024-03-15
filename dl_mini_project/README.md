@@ -1,0 +1,2 @@
+## Project Title
+26. Investigate the use of generative adversarial networks (GANs) or similar generative models to generate diverse and plausible colorizations for old black and white images, enabling the creation of multiple colorized versions for a single input image.
