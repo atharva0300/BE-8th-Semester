@@ -7,11 +7,12 @@ using namespace std;
 const int threshold = 1000; // Set your desired threshold here
 
 
-void mergesort(int a[],int i,int j);
-void merge(int a[],int i1,int j1,int i2,int j2);
+void mergesort_parallel(int a[],int i,int j);
+void merge_parallel(int a[], int i1, int j1, int i2, int j2);
+void merge_seq(int a[],int i1,int j1,int i2,int j2);
 void mergesort_seq(int a[],int i,int j);
 
-void mergesort(int a[], int i, int j)
+void mergesort_parallel(int a[], int i, int j)
 {
     int mid;
     if (i < j)
@@ -29,19 +30,58 @@ void mergesort(int a[], int i, int j)
             {
                 #pragma omp section
                 {
-                    mergesort(a, i, mid);
+                    mergesort_parallel(a, i, mid);
                 }
 
                 #pragma omp section
                 {
-                    mergesort(a, mid + 1, j);
+                    mergesort_parallel(a, mid + 1, j);
                 }
             }
         }
 
-        merge(a, i, mid, mid + 1, j);
+        merge_parallel(a, i, mid, mid + 1, j);
     }
 }
+
+void merge_parallel(int a[], int i1, int j1, int i2, int j2)
+{
+    int size = (j1 - i1 + 1) + (j2 - i2 + 1);
+    int* temp = new int[size];
+    int i=i1;    
+    int j=i2;    
+    int k=0;
+    
+    while(i<=j1 && j<=j2)    
+    {
+        if(a[i]<a[j])
+        {
+            temp[k++]=a[i++];
+        }
+        else
+        {
+            temp[k++]=a[j++];
+        }    
+    }
+    
+    while(i<=j1)    
+    {
+        temp[k++]=a[i++];
+    }
+        
+    while(j<=j2)    
+    {
+        temp[k++]=a[j++];
+    }
+        
+    for(i=i1,j=0;i<=j2;i++,j++)
+    {
+        a[i]=temp[j];
+    }    
+
+    delete[] temp; // Free the dynamically allocated memory
+}
+
 
 void mergesort_seq(int a[], int i, int j)
 {
@@ -50,15 +90,15 @@ void mergesort_seq(int a[], int i, int j)
     {
         mid = (i + j) / 2;
 
-        mergesort(a, i, mid);
-        mergesort(a, mid + 1, j);
+        mergesort_seq(a, i, mid);
+        mergesort_seq(a, mid + 1, j);
 
-        merge(a, i, mid, mid + 1, j);
+        merge_seq(a, i, mid, mid + 1, j);
     }
 }
 
  
-void merge(int a[],int i1,int j1,int i2,int j2)
+void merge_seq(int a[],int i1,int j1,int i2,int j2)
 {
     int size = (j1 - i1 + 1) + (j2 - i2 + 1);
     int* temp = new int[size];
@@ -130,13 +170,7 @@ int main()
     
     // Parallel algorithm
     start_time = omp_get_wtime();
-    #pragma omp parallel
-    {
-        #pragma omp single
-        {
-            mergesort(b, 0, n-1);
-        }
-    }
+    mergesort_parallel(b, 0, n-1);
     end_time = omp_get_wtime();
     parallel_time = end_time - start_time;
 

@@ -2,6 +2,7 @@
 #include <vector>
 #include <omp.h>
 #include <climits>
+#include <cstdlib>
 
 using namespace std;
 
@@ -46,26 +47,30 @@ void average_reduction(vector<int>& arr) {
 }
 
 void print_arr(vector<int>&arr){
-    for(int i=0;i<arr.size();i++){
+  if(arr.size() > 20 ){
+    for(int i=0;i<20;i++){
         std::cout<<arr[i]<<" ";
     }
+  }else{
+    for(int i=0;i<arr.size();i++){
+      std::cout<<arr[i]<<" ";
+    }
+  }
+    
 }
 
 int main() {
   std::cout<<"This is Atharva Pingale's code";
   std::cout<<"\nPractical 3 : Parallel Reduction\n";
   vector<int> arr;
-  arr.push_back(6);
-  arr.push_back(3);
-  arr.push_back(8);
-  arr.push_back(6);
-  arr.push_back(2);
-  arr.push_back(10);
-  arr.push_back(12);
-  arr.push_back(4);
-  arr.push_back(9);
-  std::cout<<"Printing Vector : ";
-  std::cout<<"\n";
+  int n;
+  cout<<"Enter the size of the vector : ";
+  cin>>n;
+  for(int i=0;i<n;i++){
+    int random_value = rand() % 99999;
+    arr.push_back(random_value);
+  }
+  std::cout<<"Printing first 20 elements of Vector : \n";
   print_arr(arr);
   std::cout<<"\n";
 
@@ -79,5 +84,7 @@ int main() {
         average_reduction(arr);
     }
 }
+
+return 0;
 
 }
