@@ -34,7 +34,7 @@ void parallelBubbleSort(int *a, int n)
     for (int i = 0; i < n; i++)
     {
         swapped = 0;
-        #pragma omp parallel for shared(a)
+        #pragma omp parallel for reduction(+:swapped)
         for (int j = 0; j < n - 1; j++)
         {
             if (a[j] > a[j + 1])
@@ -66,7 +66,7 @@ int main()
     b = new int[n];
     for (int i = 0; i < n; i++)
     {
-        int random_value = rand()%1000000;
+        int random_value = (rand() % (999999 - 999 + 1) + 999);
         a[i] = random_value;
         b[i] = random_value;
     }
