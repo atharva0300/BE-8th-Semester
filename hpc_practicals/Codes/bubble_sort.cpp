@@ -96,7 +96,7 @@ int main()
     cout << "\n\nTime taken by sequential algorithm: " << seq_time << " seconds" << endl;
     cout << "\n\nTime taken by parallel algorithm: " << parallel_time << " seconds" << endl;
 
-    delete[] a; // Don't forget to free the allocated memory
+    delete[] a; 
     delete[] b;
 
     return 0;
